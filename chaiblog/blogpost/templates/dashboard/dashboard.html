@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static tailwind_tags %}
+
+{% block title %}
+Blog App - Dashboard
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-5">
+  <!-- Dashboard Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-white">Your Blogs</h2>
+    <a href="{% url 'create_blog' %}" class="btn bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300">
+      <span class="font-bold">+</span> Create New Blog
+    </a>
+  </div>
+
+  {% if blogs %}
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 ">
+    {% for blog in blogs %}
+      {% if blog.user == user %}
+      <div class="col">
+
+        <div class="card text-bg-dark m-3 bg-dark-subtle bg-opacity-10 hover-card">
+          {% if blog.blog_img %}
+            <img src="{{ blog.blog_img.url }}" class="card-img" alt="{{ blog.blog_title }} Image" style="height: 200px; object-fit: cover;">
+          {% else %}
+            <div class="card-img text-center text-white d-flex justify-center items-center" style="height: 200px; background-color: #6c757d;">No image</div>
+          {% endif %}
+          
+          <div class="card-img-overlay">
+            <a href="{% url 'blog_detials' blog.id %}" class="link-offset-2 link-underline link-underline-opacity-0">
+              <div class="p-3 mb-2 bg-black text-white rounded">
+                <h5 class="card-title">{{ blog.blog_title }}</h5>
+                <p class="card-text"><small>{{ blog.blog_upload }}</small></p>
+              </div>
+            </a>
+          </div>
+        </div>
+
+      </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% else %}
+    <p class="text-white">You don't have any blogs yet. Start creating one!</p>
+  {% endif %}
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {% extends "base.html" %}
+{% load static tailwind_tags %}
+{% block title %}
+Blog App 
+{% endblock %}
+
+{% block content %}
+<div class="mt-5">
+  <div class="ps-5 pb-2">
+    <h2>Your Blogs</h2>
+    <a href="{% url "create_blog" %}" class="btn fw-bolder text-white"><span class="btn btn-primary" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">+</span> Create New</a>
+  </div>
+  {% if blogs %}
+
+<div class="row row-cols-3 row-cols-md-4 w-100 bg-dark-subtle bg-opacity-10 container-fluid px-5 rounded">
+  {% for blog in blogs %}
+  {% if blog.user == user %}
+  <div class="col">
+<div class="card text-bg-dark m-3 bg-dark ">
+  {% if blog.blog_img %}
+  <img src="{{ blog.blog_img.url }}" class="card-img" alt="{{blog.blog_title}} Image"  style="height: 200px;">
+  {% else %}
+  No image
+  {% endif %}
+  <div class="card-img-overlay">
+    <a href="{% url "blog_detials" blog.id %}" class="link-offset-2 link-underline link-underline-opacity-0 ">
+        <div class="p-3 mb-2 bg-black text-white rounded">
+            <h5 class="card-title">{{ blog.blog_title }}</h5>
+            <p class="card-text"><small>{{ blog.blog_upload }}</small></p>
+        </div>
+    </a>
+  </div>
+</div>
+</div>
+  {% endif %}
+{% endfor %}
+</div>
+{% endif %}
+</div>
+{% endblock %} {% endcomment %}

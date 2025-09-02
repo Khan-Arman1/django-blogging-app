@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}
+Blog App 
+{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+  {% if blog %}
+    <h2 class="text-white mb-2">{{blog.blog_title}}</h2>
+    <div class="card mb-3 shadow-lg">
+      <div class="row g-0">
+        
+        <!-- Blog Image Section -->
+        <div class="col-md-4" style="max-width: 540px;">
+          {% if blog.blog_img %}
+            <img src="{{ blog.blog_img.url }}" class="img-fluid rounded-start" alt="Blog Image">
+          {% else %}
+            <div class="bg-secondary text-white d-flex justify-content-center align-items-center" style="height: 200px;">
+              <span>No Image Available</span>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Blog Content Section -->
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">Author {{blog.user}}</h5>
+            <p class="card-text text-wrap" style="text-align: justify">{{ blog.blog_text }}</p>
+
+            <!-- Edit and Delete buttons only for the blog owner -->
+            {% if blog.user == user %}
+              <div class="d-flex justify-content-start mt-3">
+                <a href="{% url 'edit_blog' blog.id %}" class="btn btn-warning btn-sm me-2">Edit</a>
+                <a href="{% url 'delete_blog' blog.id %}" class="btn btn-danger btn-sm">Delete</a>
+              </div>
+            {% endif %}
+
+            <p class="card-text mt-2"><small class="text-muted">Updated on {{ blog.blog_updated }}</small></p>
+          </div>
+          
+          <!-- Review Form Section -->
+          <hr>
+          <div class="bg-success p-2 text-dark bg-opacity-10 rounded">
+            <h5 class="text-black">Add a Review</h5>
+            <form method="POST" class="mb-4">
+              {% csrf_token %}
+              {{ reviewform.as_p }}
+              <button type="submit" class="btn btn-primary w-100">Submit Review</button>
+            </form>
+          </div>
+
+          <!-- Reviews Section -->
+          <hr>
+          
+          <h5 class="text-black ms-2">Reviews</h5>
+          {% if reviews %}
+            {% for review in reviews %}
+              {% if review.r_blog.id == blog.id %}
+                {% if review.comment %}
+                  <div class="card mb-3 shadow-sm me-2">
+                    <div class="card-body">
+                      <small class="text-muted" style="font-size: 12px;">Reviewed on: {{ review.r_date }}</small>
+                      <h6 class="card-subtitle mb-2 text-info">{{ review.reviewer_name }}</h6>
+                      <p class="card-text">
+                        <strong>Rated:</strong> {{ review.get_rating_display }} <br>
+                        {{ review.comment }}
+                      </p>
+                      {% if user == blog.user %}
+                        <a href="{% url 'delete_comment' review.id %}" class="btn btn-danger btn-sm">Delete</a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            <p class="text-center text-white">No reviews yet.</p>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  {% else %}
+    <p class="text-center text-white">No blog found</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,132 @@
+Aapka Django project achha develop ho raha hai! Ab agar aap **user dashboard** banana chahte ho jahan registered/authenticated user apne actions (like create blog, change password, logout) easily access kar sake, to ye ek logical aur user-friendly step hai.
+
+---
+
+### 🧩 **User Dashboard Banane ke Steps:**
+
+---
+
+## ✅ 1. **URL Setup**
+
+`urls.py` me dashboard ke liye route banaiye:
+
+```python
+# blog/urls.py
+
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('create/', views.create_blog, name='create_blog'),
+    path('logout/', views.user_logout, name='logout'),
+    path('change-password/', views.change_password, name='change_password'),
+    # aur bhi urls...
+]
+```
+
+---
+
+## ✅ 2. **Dashboard View**
+
+Ek `dashboard` view banao jo sirf login hone ke baad access ho:
+
+```python
+# blog/views.py
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
+@login_required
+def dashboard(request):
+    return render(request, 'blog/dashboard.html')
+```
+
+> ⚠️ Note: `@login_required` se ensure hota hai ki ye page sirf login users ko dikhe.
+
+---
+
+## ✅ 3. **Dashboard Template**
+
+`dashboard.html` me user ke liye options dikhaiye:
+
+```html
+<!-- blog/templates/blog/dashboard.html -->
+
+<h2>Welcome, {{ request.user.username }}</h2>
+
+<ul>
+    <li><a href="{% url 'create_blog' %}">Create New Blog</a></li>
+    <li><a href="{% url 'change_password' %}">Change Password</a></li>
+    <li><a href="{% url 'logout' %}">Logout</a></li>
+</ul>
+```
+
+---
+
+## ✅ 4. **Change Password View**
+
+Django ka built-in `PasswordChangeView` use kar sakte ho:
+
+```python
+# blog/views.py
+
+from django.contrib.auth.views import PasswordChangeView
+from django.urls import reverse_lazy
+
+class CustomPasswordChangeView(PasswordChangeView):
+    template_name = 'blog/change_password.html'
+    success_url = reverse_lazy('dashboard')
+```
+
+Aur `urls.py` me:
+
+```python
+from .views import CustomPasswordChangeView
+
+urlpatterns += [
+    path('change-password/', CustomPasswordChangeView.as_view(), name='change_password'),
+]
+```
+
+---
+
+## ✅ 5. **Logout View**
+
+Simple logout view:
+
+```python
+# blog/views.py
+
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+
+def user_logout(request):
+    logout(request)
+    return redirect('login')  # ya jahan bhi aap bhejna chahein
+```
+
+---
+
+## ✅ 6. **Access Protection**
+
+Dashboard page ko login hone par hi access karwao, iske liye middleware ya `login_required` decorator ka use zaroori hai. Agar aap `LOGIN_URL` set nahi kiye ho to `settings.py` me add karo:
+
+```python
+# settings.py
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard'
+```
+
+---
+
+Agar aap chahein to dashboard me aur bhi cheezein dikh sakti hain, jaise:
+
+* User ke create kiye huye blogs
+* Blog edit/delete links
+* User profile info
+
+Agar aap chahte ho me aapko ek **ready-made template** de doon for dashboard ya aap apna code dikha ke mujhe specific help chahiye ho, to wo bhi kar sakte hain.
+
+Batao agla step kya lena chahoge?
