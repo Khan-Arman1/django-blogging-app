@@ -17,7 +17,7 @@ def create_blog(request):
         if form.is_valid():
             blog = form.save(commit=False)
             blog.user = request.user
-            form.save(commit=True)
+            form.save()
             return redirect('bloghome')
     else:
         form = BlogsForm()
@@ -33,7 +33,7 @@ def edit_blog(request, blog_id):
         if form.is_valid():
             blog = form.save(commit=False)
             blog.user = request.user
-            form.save(commit=True)
+            form.save()
             return redirect('bloghome')
     else:
         form = BlogsForm(instance=blog)
@@ -88,7 +88,7 @@ def register(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password1'])
-            form.save(commit=True)
+            form.save()
             login(request, user)
             return redirect('dashboard')
     else:
@@ -102,7 +102,7 @@ def search(request):
             query = request.GET.get('q')
             form = Blogs.objects.all()
             if query:
-                blog = form.filter(Q(blog_title__icontains = query) or Q(blog_text__icontains = query) or Q(user__icontains = query))
+                blog = form.filter(Q(blog_title__icontains = query) | Q(blog_text__icontains = query) | Q(user__username__icontains = query))
                 return render(request, 'search.html', {'blog':blog})
     except:
         return HttpResponse("<h1>Please enter a valid search querry.</h1>")
