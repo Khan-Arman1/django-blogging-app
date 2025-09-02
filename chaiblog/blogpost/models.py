@@ -8,7 +8,7 @@ class Blogs(models.Model):
     blog_title = models.CharField(max_length=50, null=False, blank=False)
     blog_img = models.ImageField(upload_to='uploads/', blank=True, null=True)
     blog_text = models.TextField(blank=False, null= False)
-    blog_upload = models.DateTimeField(default=timezone.now())
+    blog_upload = models.DateTimeField(default=timezone.now)
     blog_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -24,10 +24,11 @@ class BlogReview(models.Model):
         (5, "Excellent")
     ]
     r_blog = models.ForeignKey(Blogs, on_delete=models.CASCADE, related_name='reviews') # this create a relation
-    rating = models.IntegerField(max_length=1, choices=RATING_CHOICE)
+    rating = models.IntegerField(choices=RATING_CHOICE)
     reviewer_name = models.CharField(max_length=30)
-    comment = models.CharField(blank=True)
+    comment = models.CharField(max_length=255,blank=True)
     r_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
+
         return f"{self.r_blog.user} - {self.comment}"
